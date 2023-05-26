@@ -115,21 +115,34 @@ networks <- list(food_sharing = graph_from_adjacency_matrix(bin_sharing, diag = 
                  men_work = graph_from_adjacency_matrix(m_q, diag = F)
                  )
 
-#coords <- layout_nicely(networks[[1]])
+colrs <- data.frame(
+  id = su$su_id,
+  wealth = su$su_direct_wealth, 
+  wealth_rank = rank(su$su_direct_wealth))
+
+colrs <- colrs[order(colrs$wealth_rank, decreasing = T),]
+colrs$colour <- hcl.colors(length(colrs$wealth_rank), rev = F, palette = "TealGrn")
 
 for(i in 1:length(networks)){
-V(networks[[i]])$wealth <- rank(su$su_direct_wealth[match(V(networks[[i]])$name, su$su_id)])
-V(networks[[i]])$colour <- hcl.colors(length(V(networks[[i]])$wealth), rev = F, palette = "TealGrn")
+V(networks[[i]])$id <- su$su_id
+V(networks[[i]])$colour <- colrs$colour[match(V(networks[[i]])$id, colrs$id)]
 V(networks[[i]])$status <- su$status[match(V(networks[[i]])$name, su$su_id)]
+}
 
-png(paste0("./3-analyses/net_digraph_",names(networks[i]),".png"))
+data.frame(V(networks[[i]])$id, V(networks[[i]])$colour)
+
+set.seed(3)
+coords <- layout_nicely(networks[[1]])
+
+for(i in 1:length(networks)){
+pdf(paste0("./3-analyses/net_digraph_",names(networks[i]),".pdf"))
 plot(networks[[i]], edge.arrow.size=0.2, 
           vertex.color= V(networks[[i]])$colour, 
           vertex.size=1.5+(0.4*degree(networks[[i]])), 
           vertex.label = NA,
           #vertex.frame.color = V(networks)$status,
           edge.curved=0.4, 
-          layout = layout_nicely)
+          layout = coords)
 dev.off()
 }
 
