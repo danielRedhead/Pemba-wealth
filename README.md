@@ -60,6 +60,10 @@ A matrix of physical distances between all sharing units within the village.
 
 A matrix of the average genetic relatedness between all sharing units within the village.
 
+### Details for: su_wealth_distance.csv
+
+A matrix of the distance in material wealth between all sharing units within the village. This was used to create *su_log_wealth_distance.csv*. 
+
 ## Sharing/Access information
 
 These data and code are also accessible on an open GitHub repository.
